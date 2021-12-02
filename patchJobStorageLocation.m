@@ -41,7 +41,7 @@ try
     if isempty(profile)
         error("Unable to locate cluster profile with name: %s", profile_name);
     end
-    
+
     % Get the job_storage_location from the request profile.
     scheduler = profile.getSchedulerComponent;
     if ~isprop(scheduler, "JobStorageLocation")
@@ -52,11 +52,12 @@ try
         local_profile = parallel.cluster.Local;
         job_storage_location = local_profile.JobStorageLocation;
     end
-    
+
     % Set the UUID subfolder.
     uuid = java.util.UUID.randomUUID.toString;
     uuid = string(uuid);
     uuid_storage_location = fullfile(job_storage_location, uuid);
+    uuid_storage_location = char(uuid_storage_location) % <= R2019a compatibility
     [~, ~, ~] = mkdir(uuid_storage_location);
     set(scheduler, 'JobStorageLocation', uuid_storage_location, 'session')
 catch e
